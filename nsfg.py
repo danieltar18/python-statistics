@@ -80,3 +80,27 @@ def clean_fem_resp(resp):
     resp["year"] = pd.DatetimeIndex(dates).year - 1900
     resp["decade"] = resp.year // 10
     resp["fives"] = resp.year // 5
+
+
+def read_fem_preg(dct_file="datasets/nsfg/2002FemPreg.dct", dat_file="datasets/nsfg/2002FemPreg.dat.gz"):
+    """Reads the NSFG pregnancy data.
+
+    dct_file: string file name
+    dat_file: string file name
+
+    returns: DataFrame
+    """
+    preg = read_nsfg_data(dct_file, dat_file)
+    clean_fem_preg(preg)
+    return preg
+
+def get_nsfg_groups():
+    """Read the NSFG pregnancy file and split into groups.
+    
+    returns: all live births, first babies, other babies
+    """
+    preg = read_fem_preg()
+    live = preg.query("outcome == 1")
+    firsts = live.query("birthord == 1")
+    others = live.query("birthord != 1")
+    return live, firsts, others
